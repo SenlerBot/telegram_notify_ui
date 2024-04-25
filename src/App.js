@@ -31,7 +31,7 @@ function App() {
         if ('public' in settings) {
             setPublicSettings(JSON.parse(settings.public))
         }
-        message.responce.success = true;
+        message.response.success = true;
         message.send();
     });
 
@@ -50,15 +50,24 @@ function App() {
 
 
     integrationConnect.route('getData', (message) => {
-        message['responce'] = {
+        message['response'] = {
             payload: {},
             success: true
         };
 
-        message.responce.payload['public'] =  JSON.parse(localStorage.getItem('public_settings'));
-        message.responce.payload['private'] = JSON.parse(localStorage.getItem('private_settings'));
+        message.response.payload['public'] =  JSON.parse(localStorage.getItem('public_settings'));
+        message.response.payload['private'] = JSON.parse(localStorage.getItem('private_settings'));
+        message.response.payload['command'] = 'Отправить сообщение';
+        //makeDescription
+        let description = '';
+        if (message.response.payload['private'] && Array.isArray(message.response.payload['private'])){
+            for(let item of message.response.payload['private']){
+                description += 'ChatId ' + item.chat_id+ `
+`;
+            }
+        }
 
-        message.responce.payload['command_title'] = 'Бот шлет сообщение с подписчиком';
+        message.response.payload['description'] = description;
 
         message.send();
 
